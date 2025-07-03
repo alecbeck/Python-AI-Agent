@@ -2,3 +2,6 @@
 __pycache__/
 .env
 **/*lorem*
+uv.lock
+pyproject.toml
+.python-version
