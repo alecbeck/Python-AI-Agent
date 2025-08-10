@@ -1,5 +1,6 @@
 import os
 import subprocess
+from google.genai import types
 
 def run_python_file(working_directory, file_path):
 	working_directory_abs = os.path.abspath(working_directory)
@@ -9,7 +10,9 @@ def run_python_file(working_directory, file_path):
 		if target_file_path.startswith(working_directory_abs):
 			if os.path.exists(target_file_path):
 				if target_file_path.endswith(".py"):
-					result = subprocess.run(["python", target_file_path], text=True, timeout=30, cwd=working_directory, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+					result = subprocess.run(["python", target_file_path], text=True, timeout=30, 
+					cwd=working_directory, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+					
 					output = f'STDOUT:{result.stdout}\nSTDERR:{result.stderr}'
 					#print(output)
 					if result.returncode != 0:
@@ -26,3 +29,18 @@ def run_python_file(working_directory, file_path):
 			return f'Error: Cannot execute "{file_path}" as it is outside the permitted working directory'
 	except Exception as e:
 		return f'Error: executing Python file: {e}'
+
+
+schema_run_python_file = types.FunctionDeclaration(
+    name="run_python_file",
+    description="Runs a python file in the specified dirrecotry, and provides output from the execution.",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="The file path to a python file, relative to the working directory.",
+            ),
+        },
+    ),
+)
